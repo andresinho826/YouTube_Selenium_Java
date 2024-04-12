@@ -1,0 +1,26 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+*.class
+*.jar
+*.war
+*.ear
+out/
+target/
+.idea/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+test-output/
+lib/
+dependency/
+*.log
+*.tmp
+testng.xml
+suite.xml
+.DS_Store
+*.properties
+config/
+.mvn/
