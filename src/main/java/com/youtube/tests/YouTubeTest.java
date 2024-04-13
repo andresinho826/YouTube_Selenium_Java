@@ -1,6 +1,7 @@
 package com.youtube.tests;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -9,56 +10,54 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
 import java.time.Duration;
+import java.util.List;
 
 public class YouTubeTest {
 
     private WebDriver driver ;
     String urlPage = "https://www.youtube.com/";
     String pathDriver = "src/main/resources/chromedriver.exe";
-
     SoftAssert softAssertion = new SoftAssert();
 
     @BeforeClass
     public void setUrlPage(){
         System.setProperty("webdriver.chrome.driver", pathDriver);
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("acceptInsecureCerts", false);
         ChromeOptions options = new ChromeOptions();
-        //options.addArguments("--incognito");
-        options.merge(capabilities);
+        options.addArguments("--incognito");
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
-        driver.navigate().to(urlPage);
     }
 
     @Test
-    public void loginYouTube(){
+    public void searchTestngOnYouTube(){
+        driver.navigate().to(urlPage);
         softAssertion.assertEquals(driver.getTitle(),"YouTube");
 
-        WebElement signInBtn = driver.findElement(By.cssSelector("#end .yt-spec-touch-feedback-shape__fill"));
-        signInBtn.click();
+        String searching = "TestNG";
 
-        WebElement user = driver.findElement(By.cssSelector("#identifierId"));
-        user.sendKeys("andresinho826");
+        WebElement inputSearch = driver.findElement(By.cssSelector("#search-form #search"));
+        inputSearch.sendKeys(searching);
 
-        WebElement nextBtnOne = driver.findElement(By.cssSelector("#identifierNext"));
-        nextBtnOne.click();
+        WebDriverWait wait1 = new WebDriverWait(driver, Duration.ofSeconds(20));
+        wait1.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("#search-form #search")));
+
+        inputSearch.sendKeys(Keys.ENTER);
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("#password > div.aCsJod.oJeWuf > div > div.Xb9hP > input")));
+        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".style-scope ytd-video-renderer")));
 
-        WebElement pass = driver.findElement(By.cssSelector("#password > div.aCsJod.oJeWuf > div > div.Xb9hP > input"));
-        pass.sendKeys("Jacob2020");
+        List<WebElement> elements = driver.findElements(By.cssSelector(".style-scope ytd-video-renderer"));
+        //for (WebElement element : elements){}
 
-        WebElement nextBtnTwo = driver.findElement(By.cssSelector("#passwordNext"));
-        nextBtnTwo.click();
-
+        //softAssertion.assertTrue(elements.size() < 1);
+        Assert.assertTrue(elements.size() <= 200);
     }
 
     @AfterClass
